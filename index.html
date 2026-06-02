@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calendar App</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header class="app-header">
+    <nav class="nav-bar" aria-label="Month navigation">
+      <button class="btn btn--icon" id="btn-prev" aria-label="Previous month">&#8249;</button>
+      <h2 class="month-label" id="month-label">Month Year</h2>
+      <button class="btn btn--icon" id="btn-next" aria-label="Next month">&#8250;</button>
+    </nav>
+    <button class="btn btn--today" id="btn-today">Today</button>
+  </header>
+
+  <main>
+    <div class="calendar-grid" id="calendar-grid">
+      <!-- Populated by app.js -->
+    </div>
+  </main>
+
+  <!-- Modal -->
+  <div class="modal-overlay" id="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-title" aria-hidden="true">
+    <div class="modal-dialog">
+      <header class="modal-header">
+        <h3 class="modal-title" id="modal-title">Add Event</h3>
+        <button class="btn btn--icon modal-close" id="modal-close" aria-label="Close modal">&times;</button>
+      </header>
+
+      <form class="modal-form" id="event-form" novalidate>
+        <input type="hidden" id="event-id">
+
+        <div class="form-group">
+          <label for="event-title">Title <span class="required" aria-hidden="true">*</span></label>
+          <input type="text" id="event-title" name="title" maxlength="100" autocomplete="off">
+          <span class="error-msg" id="error-title" role="alert"></span>
+        </div>
+
+        <div class="form-group">
+          <label for="event-date">Date</label>
+          <input type="date" id="event-date" name="date">
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="event-start">Start time</label>
+            <input type="time" id="event-start" name="startTime">
+          </div>
+          <div class="form-group">
+            <label for="event-end">End time</label>
+            <input type="time" id="event-end" name="endTime">
+            <span class="error-msg" id="error-time" role="alert"></span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="event-desc">Description</label>
+          <textarea id="event-desc" name="description" maxlength="500" rows="3"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="event-color">Color</label>
+          <input type="color" id="event-color" name="color" value="#4a90e2">
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn btn--danger" id="btn-delete" hidden>Delete</button>
+          <div class="modal-actions-right">
+            <button type="button" class="btn btn--secondary" id="btn-cancel">Cancel</button>
+            <button type="submit" class="btn btn--primary" id="btn-save">Save</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

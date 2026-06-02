@@ -83,27 +83,54 @@ function renderGrid() {
   const firstDay = getFirstDayOfWeek(currentYear, currentMonth);
   const todayStr = getTodayString();
 
-  // Leading empty cells
-  for (let i = 0; i < firstDay; i++) {
-    const empty = document.createElement('div');
-    empty.className = 'day-cell day-cell--empty';
-    grid.appendChild(empty);
+  // Leading overflow days from previous month
+  const prevMonth = currentMonth === 0 ? 11 : currentMonth - 1;
+  const prevYear = currentMonth === 0 ? currentYear - 1 : currentYear;
+  const prevMonthDays = getDaysInMonth(prevYear, prevMonth);
+  for (let i = firstDay - 1; i >= 0; i--) {
+    const day = prevMonthDays - i;
+    const dateStr = toDateString(prevYear, prevMonth, day);
+    grid.appendChild(renderDayCell(day, dateStr, todayStr, true));
   }
 
-  // Day cells
+  // Current month days
   for (let day = 1; day <= daysInMonth; day++) {
     const dateStr = toDateString(currentYear, currentMonth, day);
-    grid.appendChild(renderDayCell(day, dateStr, todayStr));
+    grid.appendChild(renderDayCell(day, dateStr, todayStr, false));
+  }
+
+  // Trailing overflow days from next month
+  const totalCells = firstDay + daysInMonth;
+  const trailing = totalCells % 7 === 0 ? 0 : 7 - (totalCells % 7);
+  const nextMonth = currentMonth === 11 ? 0 : currentMonth + 1;
+  const nextYear = currentMonth === 11 ? currentYear + 1 : currentYear;
+  for (let day = 1; day <= trailing; day++) {
+    const dateStr = toDateString(nextYear, nextMonth, day);
+    grid.appendChild(renderDayCell(day, dateStr, todayStr, true));
   }
 }
 
-function renderDayCell(day, dateStr, todayStr) {
+function renderDayCell(day, dateStr, todayStr, isOverflow) {
   const cell = document.createElement('div');
-  cell.className = 'day-cell' + (dateStr === todayStr ? ' day-cell--today' : '');
+  let cls = 'day-cell';
+  if (isOverflow) cls += ' day-cell--overflow';
+  if (dateStr === todayStr) cls += ' day-cell--today';
+  cell.className = cls;
 
   const num = document.createElement('div');
   num.className = 'day-number';
-  num.textContent = day;
+
+  // First of a month in overflow cells gets "Jun 1" style label
+  if (isOverflow && day === 1) {
+    const parts = dateStr.split('-');
+    const label = new Date(+parts[0], +parts[1] - 1, 1)
+      .toLocaleString('default', { month: 'short' }) + ' 1';
+    num.textContent = label;
+    num.classList.add('day-number--month-label');
+  } else {
+    num.textContent = day;
+  }
+
   cell.appendChild(num);
 
   // Event pills
@@ -130,7 +157,7 @@ function renderDayCell(day, dateStr, todayStr) {
 function renderEventPill(ev) {
   const pill = document.createElement('div');
   pill.className = 'event-pill';
-  pill.style.backgroundColor = ev.color || '#4a90e2';
+  pill.style.backgroundColor = ev.color || '#1a73e8';
   pill.textContent = ev.startTime ? `${ev.startTime} ${ev.title}` : ev.title;
   pill.title = ev.title;
   pill.addEventListener('click', e => {
@@ -163,13 +190,13 @@ function openModal(mode, prefillDate, existingEvent) {
     document.getElementById('event-start').value = existingEvent.startTime || '';
     document.getElementById('event-end').value = existingEvent.endTime || '';
     document.getElementById('event-desc').value = existingEvent.description || '';
-    document.getElementById('event-color').value = existingEvent.color || '#4a90e2';
+    document.getElementById('event-color').value = existingEvent.color || '#1a73e8';
     deleteBtn.hidden = false;
   } else {
     title.textContent = 'Add Event';
     editingEventId = null;
     document.getElementById('event-form').reset();
-    document.getElementById('event-color').value = '#4a90e2';
+    document.getElementById('event-color').value = '#1a73e8';
     if (prefillDate) document.getElementById('event-date').value = prefillDate;
     deleteBtn.hidden = true;
   }

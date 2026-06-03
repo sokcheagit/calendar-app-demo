@@ -83,3 +83,41 @@ All three source files created in a single pass:
 - **`app.js`** — ~220 lines, no dependencies. State: `currentYear`, `currentMonth`, `events[]`. Storage layer reads/writes `localStorage["calendar_events"]` as a JSON array. Rendering rebuilds the grid DOM on every state change. Modal handles add and edit modes, pre-filling fields from the clicked day or event. Validation catches empty title and end-before-start time. Focus trap cycles Tab within the open dialog; Escape closes it.
 
 **Changes summary:** 3 new files, ~500 lines total. No external dependencies. Open `index.html` directly in any modern browser.
+
+---
+
+## Phase 8 — Accessibility Fixes
+
+### CSS (style.css)
+- [x] 8.1 Add `:focus-visible` outline to `.btn-today` and `.create-btn`
+- [x] 8.2 Add `.sr-only` utility class
+- [x] 8.3 Fix contrast: raise form label color from `--text-faint` to `--text-muted`
+- [x] 8.4 Fix contrast: raise mini day-of-week header color from `--text-faint` to `--text-muted`
+
+### HTML (index.html)
+- [x] 8.5 Add `aria-required="true"` and `aria-describedby="error-title"` to `#event-title`
+- [x] 8.6 Add `aria-describedby="error-time"` to `#event-end`
+- [x] 8.7 Add `aria-expanded="false"` and `aria-controls="sidebar"` to `#btn-menu`
+- [x] 8.8 Add `aria-live="polite"` announce region for month navigation
+
+### JS (app.js)
+- [x] 8.9  Update CALENDARS: darken Family `#f4511e` → `#c0392b`, Birthdays `#33b679` → `#1a7a4a`
+- [x] 8.10 Day cells: add `role="button"`, `tabindex="0"`, `aria-label`, `keydown` handler
+- [x] 8.11 Event pills: add `role="button"`, `tabindex="0"`, `aria-label`, `keydown` handler
+- [x] 8.12 "More" indicator: add `role="button"`, `tabindex="0"`, `aria-label`, `keydown` handler
+- [x] 8.13 Modal: save trigger on open; restore focus on close
+- [x] 8.14 Sidebar toggle: sync `aria-expanded` in `toggleSidebar` and `closeSidebar`
+- [x] 8.15 Mini calendar day buttons: add `aria-label` with full date string
+- [x] 8.16 Mini day-of-week headers: add `aria-label` with full day name
+- [x] 8.17 Main calendar day headers: add `aria-label` and `role="columnheader"`
+- [x] 8.18 Month navigation: update live region when month changes
+
+## Phase 8 Review
+
+18 accessibility fixes applied across all three files.
+
+**style.css** — Added `.sr-only` utility; added `:focus-visible` rings to `.btn-today` and `.create-btn`; raised form label and mini day-of-week colors from `--text-faint` (#70757a, fails AA) to `--text-muted` (#5f6368, 5.7:1).
+
+**index.html** — Added `aria-required` and `aria-describedby` on the title input; `aria-describedby` on end-time input; `aria-expanded`/`aria-controls` on the menu button; and a hidden `aria-live="polite"` region for month announcements.
+
+**app.js** — Darkened Family (#f4511e → #c0392b, now 5.4:1) and Birthdays (#33b679 → #1a7a4a, now 5.4:1) to pass AA. Day cells, event pills, and "more" indicators are now fully keyboard accessible (`role="button"`, `tabindex="0"`, `aria-label`, `keydown` handler). Modal now saves and restores focus to the triggering element. Sidebar `aria-expanded` stays in sync. Mini calendar day buttons expose the full date. Day-of-week headers in both the main grid and mini calendar have unambiguous `aria-label` values. Month navigation announces the new month via the live region.
